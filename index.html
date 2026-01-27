@@ -338,7 +338,9 @@
         .modal-content img {
             width: 100%;
             max-width: 400px;
+            max-height: 500px;
             height: auto;
+            object-fit: cover;
             border-radius: 15px;
             margin: 20px auto;
             display: block;
@@ -533,7 +535,7 @@
         <div class="acceptance-page">
             <div class="teddy-section">
                 <div class="teddy-bear">🧸🌹</div>
-                <h2>You will be my Valentine 💖</h2>
+                <h2>You will always be my Valentine Mwahhh😚 💖</h2>
             </div>
 
             <div class="cards-grid">
@@ -661,6 +663,7 @@
                 showLoveLetter2();
             } else if (cardNum === '3') {
                 // Valentine's Day - February 14
+                // ⚠️ ON 14TH FEBRUARY: This will automatically unlock and show the Valentine's Day card ⚠️
                 if (today.getMonth() === 1 && today.getDate() === 14) {
                     showValentineDay();
                 } else {
@@ -668,6 +671,7 @@
                 }
             } else if (cardNum === '4') {
                 // Birthday - March 24
+                // ⚠️ ON 24TH MARCH: This will automatically unlock and show the Birthday album ⚠️
                 if (today.getMonth() === 2 && today.getDate() === 24) {
                     showBirthdayAlbum();
                 } else {
@@ -679,7 +683,7 @@
         function showLoveLetter1() {
             modalBody.innerHTML = `
                 <h2>My Dearest Valentine 💕</h2>
-                <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=400&h=400&fit=crop" alt="Love">
+                <img src="https://i.ibb.co/7NGLNmZt/IMG-20251211-WA0135.jpg" alt="Love">
                 <div class="message">
                     <p>From the moment I met you, my world became brighter. Your smile lights up my darkest days, and your laughter is my favorite melody. Every moment spent with you is a treasure I hold close to my heart.</p>
                     <p>You are my sunshine, my inspiration, and my everything. Thank you for being you. ❤️</p>
@@ -691,10 +695,11 @@
         function showLoveLetter2() {
             modalBody.innerHTML = `
                 <h2>Forever Yours 💖</h2>
-                <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=400&h=400&fit=crop" alt="Romance">
+                <img src="https://i.ibb.co/nNLqhQvV/20251230-145702.jpg" alt="Romance">
                 <div class="message">
                     <p>You make me believe in magic, in destiny, and in true love. Your kindness, your warmth, and your beautiful soul make every day an adventure worth living.</p>
                     <p>With you, I've found my home, my peace, and my forever. I love you more than words can express. 💕</p>
+                    <p>I'm soo soo sorry for always being annoying but I really really love you babyyyyy Mwahhh 💖</p>
                 </div>
             `;
             modal.classList.add('active');
@@ -812,13 +817,17 @@
             const valentineCard = document.getElementById('valentineCard');
             const birthdayCard = document.getElementById('birthdayCard');
 
-            // Check Valentine's Day
+            // ⚠️ AUTOMATIC UNLOCK SYSTEM ⚠️
+            // These cards will automatically unlock on their special dates
+            // No action needed from you - just wait for the dates!
+            
+            // Check Valentine's Day - Auto unlocks on February 14
             if (today.getMonth() === 1 && today.getDate() === 14) {
                 valentineCard.classList.remove('locked');
                 valentineCard.querySelector('.lock-icon').textContent = '🔓';
             }
 
-            // Check Birthday
+            // Check Birthday - Auto unlocks on March 24
             if (today.getMonth() === 2 && today.getDate() === 24) {
                 birthdayCard.classList.remove('locked');
                 birthdayCard.querySelector('.lock-icon').textContent = '🔓';
