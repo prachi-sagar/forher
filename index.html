@@ -519,6 +519,11 @@
     <!-- Floating Hearts Background -->
     <div class="heart-container" id="heartContainer"></div>
 
+    <!-- Background Music -->
+    <audio id="backgroundMusic" loop>
+        <source src="valentine-song.mp3" type="audio/mpeg">
+    </audio>
+
     <!-- Page 1: Question -->
     <div class="page active" id="page1">
         <div class="question-page">
@@ -535,7 +540,7 @@
         <div class="acceptance-page">
             <div class="teddy-section">
                 <div class="teddy-bear">🧸🌹</div>
-                <h2>You will always be my Valentine Mwahhh😚 💖</h2>
+                <h2>You will be my Valentine 💖</h2>
             </div>
 
             <div class="cards-grid">
@@ -555,7 +560,7 @@
                     <div class="card-icon">🌹</div>
                     <h3>Valentine's Day Special</h3>
                     <p>Opens on February 14th</p>
-                    <span class="lock-icon">🔒</span>
+                    
                 </div>
 
                 <div class="card" data-card="4" id="birthdayCard">
@@ -627,6 +632,12 @@
         });
 
         btnYes.addEventListener('click', function() {
+            // Start background music
+            const music = document.getElementById('backgroundMusic');
+            music.play().catch(function(error) {
+                console.log('Music autoplay prevented:', error);
+            });
+            
             document.getElementById('page1').classList.remove('active');
             document.getElementById('page2').classList.add('active');
         });
@@ -699,30 +710,195 @@
                 <div class="message">
                     <p>You make me believe in magic, in destiny, and in true love. Your kindness, your warmth, and your beautiful soul make every day an adventure worth living.</p>
                     <p>With you, I've found my home, my peace, and my forever. I love you more than words can express. 💕</p>
-                    <p>I'm soo soo sorry for always being annoying but I really really love you babyyyyy Mwahhh 💖</p>
                 </div>
             `;
             modal.classList.add('active');
         }
 
         function showValentineDay() {
-            modalBody.innerHTML = `
-                <div class="valentine-scene">
-                    <h1>Happy Valentine's Day, My Love! 💖</h1>
-                    <div class="dancing-couple">💑</div>
-                    <div class="message">
-                        <p style="font-size: 1.2rem; color: #d63384; line-height: 1.8;">
-                            On this special day, I want you to know that you are the reason my heart beats with joy. 
-                            Every moment with you is a celebration of love. Here's to us, to our beautiful journey, 
-                            and to countless more Valentine's Days together. 🌹
-                        </p>
-                        <p style="font-size: 1.5rem; margin-top: 30px;">I Love You Forever! ❤️</p>
+            let currentPhoto = 0;
+            // 🔥 IMAGES WILL LOAD FROM YOUR "images" FOLDER 🔥
+            // Just save your photos as: 1.jpg, 2.jpg, 3.jpg ... 30.jpg
+            const photos = [
+                { url: 'images/1.jpg', message: 'The day we first met... I knew my life would never be the same. ❤️' },
+                { url: 'images/2.jpg', message: 'Your smile is my favorite thing in the world. 😊' },
+                { url: 'images/3.jpg', message: 'Every moment with you feels like magic. ✨' },
+                { url: 'images/4.jpg', message: 'You make my heart skip a beat every single day. 💓' },
+                { url: 'images/5.jpg', message: 'Together, we create the most beautiful memories. 🌹' },
+                { url: 'images/6.jpg', message: 'You are my forever and always. 💕' },
+                { url: 'images/7.jpg', message: 'With you, I am home. 🏡' },
+                { url: 'images/8.jpg', message: 'Your love completes me. 💖' },
+                { url: 'images/9.jpg', message: 'Every day with you is a blessing. 🙏' },
+                { url: 'images/10.jpg', message: 'You are my greatest adventure. 🗺️' },
+                { url: 'images/11.jpg', message: 'I fall in love with you more each day. 🌺' },
+                { url: 'images/12.jpg', message: 'You are my sunshine on cloudy days. ☀️' },
+                { url: 'images/13.jpg', message: 'My heart belongs to you forever. 💝' },
+                { url: 'images/14.jpg', message: 'You make everything better just by being you. 🌟' },
+                { url: 'images/15.jpg', message: 'Thank you for loving me unconditionally. 💗' },
+                { url: 'images/16.jpg', message: 'You are my dream come true. 🌈' },
+                { url: 'images/17.jpg', message: 'I cherish every moment we share. ⏰' },
+                { url: 'images/18.jpg', message: 'You are the best thing that ever happened to me. 🎁' },
+                { url: 'images/19.jpg', message: 'My love for you knows no bounds. 🌊' },
+                { url: 'images/20.jpg', message: 'You are my person, my everything. 👫' },
+                { url: 'images/21.jpg', message: 'Together we are unstoppable. 💪' },
+                { url: 'images/22.jpg', message: 'You light up my world. 💡' },
+                { url: 'images/23.jpg', message: 'I am so grateful for you. 🙌' },
+                { url: 'images/24.jpg', message: 'You make my heart sing. 🎵' },
+                { url: 'images/25.jpg', message: 'Every memory with you is precious. 📸' },
+                { url: 'images/26.jpg', message: 'You are my safe haven. 🏠' },
+                { url: 'images/27.jpg', message: 'I love you to the moon and back. 🌙' },
+                { url: 'images/28.jpg', message: 'You complete me in every way. 🧩' },
+                { url: 'images/29.jpg', message: 'Your happiness is my happiness. 😄' },
+                { url: 'images/30.jpg', message: 'Happy Valentine\'s Day, Nanuuu! You are my everything. I love you forever! 💖' }
+            ];
+
+            function renderPhoto() {
+                const photo = photos[currentPhoto];
+                modalBody.innerHTML = `
+                    <div class="valentine-album">
+                        <div class="album-header">
+                            <h1 style="color: #d63384; font-size: clamp(1.5rem, 4vw, 2.5rem); margin-bottom: 30px;">
+                                💕 Our Love Story Album 💕
+                            </h1>
+                            <!-- PHOTO COUNTER - COMMENTED OUT -->
+                            <!-- <p style="color: #ff6b9d; font-size: 1.1rem; margin-bottom: 30px;">
+                                Photo ${currentPhoto + 1} of ${photos.length}
+                            </p> -->
+                        </div>
+                        
+                        <div class="album-photo-container" style="position: relative; margin: 30px 0;">
+                            <img src="${photo.url}" alt="Memory ${currentPhoto + 1}" 
+                                 style="width: 100%; max-width: 500px; max-height: 400px; object-fit: cover; 
+                                        border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+                                        border: 8px solid white; display: block; margin: 0 auto;
+                                        animation: photoFadeIn 0.5s ease;">
+                            
+                            <div style="position: absolute; top: -15px; right: 10%; transform: rotate(15deg); 
+                                        font-size: 2rem; animation: float 3s infinite ease-in-out;">❤️</div>
+                            <div style="position: absolute; bottom: -15px; left: 10%; transform: rotate(-15deg); 
+                                        font-size: 2rem; animation: float 3s 1s infinite ease-in-out;">💕</div>
+                        </div>
+                        
+                        <div class="album-message" style="background: linear-gradient(135deg, #fff5f7 0%, #ffe8f0 100%); 
+                                                          padding: 25px; border-radius: 15px; margin: 30px 0; 
+                                                          box-shadow: 0 5px 15px rgba(255,107,157,0.2);
+                                                          animation: messageFadeIn 0.7s ease 0.3s backwards;">
+                            <p style="font-size: 1.2rem; color: #d63384; line-height: 1.8; 
+                                      text-align: center; font-style: italic; margin: 0;">
+                                "${photo.message}"
+                            </p>
+                        </div>
+                        
+                        <div class="album-navigation" style="display: flex; justify-content: space-between; 
+                                                             align-items: center; margin-top: 30px; gap: 15px;">
+                            <button id="prevPhoto" ${currentPhoto === 0 ? 'disabled' : ''} 
+                                    style="background: linear-gradient(135deg, #ff6b9d 0%, #c94b7f 100%); 
+                                           color: white; border: none; padding: 12px 25px; border-radius: 25px; 
+                                           cursor: pointer; font-size: 1rem; font-weight: bold; 
+                                           transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(255,107,157,0.3);
+                                           ${currentPhoto === 0 ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
+                                ← Previous
+                            </button>
+                            
+                            <div style="text-align: center; flex: 1;">
+                                <div style="display: flex; justify-content: center; gap: 5px; flex-wrap: wrap;">
+                                    ${photos.map((_, idx) => `
+                                        <div style="width: 8px; height: 8px; border-radius: 50%; 
+                                                    background: ${idx === currentPhoto ? '#ff6b9d' : '#ffc0d0'}; 
+                                                    transition: all 0.3s ease;"></div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            
+                            <button id="nextPhoto" ${currentPhoto === photos.length - 1 ? 'disabled' : ''} 
+                                    style="background: linear-gradient(135deg, #ff6b9d 0%, #c94b7f 100%); 
+                                           color: white; border: none; padding: 12px 25px; border-radius: 25px; 
+                                           cursor: pointer; font-size: 1rem; font-weight: bold; 
+                                           transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(255,107,157,0.3);
+                                           ${currentPhoto === photos.length - 1 ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
+                                Next →
+                            </button>
+                        </div>
+                        
+                        ${currentPhoto === photos.length - 1 ? `
+                            <div style="text-align: center; margin-top: 30px; padding: 25px; 
+                                        background: linear-gradient(135deg, #ffe0f0 0%, #ffeef8 100%); 
+                                        border-radius: 15px; animation: finalMessagePulse 2s infinite;">
+                                <h2 style="color: #d63384; font-size: 1.8rem; margin-bottom: 15px;">
+                                    I Love You More Than Words Can Say! 💖
+                                </h2>
+                                <p style="color: #ff6b9d; font-size: 1.1rem;">
+                                    Happy Valentine's Day, My Forever Love! 🌹
+                                </p>
+                            </div>
+                        ` : ''}
                     </div>
-                </div>
-            `;
+                    
+                    <style>
+                        @keyframes photoFadeIn {
+                            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+                            to { opacity: 1; transform: scale(1) translateY(0); }
+                        }
+                        
+                        @keyframes messageFadeIn {
+                            from { opacity: 0; transform: translateY(20px); }
+                            to { opacity: 1; transform: translateY(0); }
+                        }
+                        
+                        @keyframes finalMessagePulse {
+                            0%, 100% { transform: scale(1); }
+                            50% { transform: scale(1.02); }
+                        }
+                        
+                        .album-navigation button:not(:disabled):hover {
+                            transform: translateY(-3px);
+                            box-shadow: 0 6px 15px rgba(255,107,157,0.4);
+                        }
+                    </style>
+                `;
+
+                // Add event listeners
+                const prevBtn = document.getElementById('prevPhoto');
+                const nextBtn = document.getElementById('nextPhoto');
+                
+                if (prevBtn) {
+                    prevBtn.addEventListener('click', () => {
+                        if (currentPhoto > 0) {
+                            currentPhoto--;
+                            renderPhoto();
+                        }
+                    });
+                }
+                
+                if (nextBtn) {
+                    nextBtn.addEventListener('click', () => {
+                        if (currentPhoto < photos.length - 1) {
+                            currentPhoto++;
+                            renderPhoto();
+                        }
+                    });
+                }
+
+                // Keyboard navigation
+                document.addEventListener('keydown', handleKeyboard);
+                function handleKeyboard(e) {
+                    if (e.key === 'ArrowLeft' && currentPhoto > 0) {
+                        currentPhoto--;
+                        renderPhoto();
+                    } else if (e.key === 'ArrowRight' && currentPhoto < photos.length - 1) {
+                        currentPhoto++;
+                        renderPhoto();
+                    } else if (e.key === 'Escape') {
+                        modal.classList.remove('active');
+                        document.removeEventListener('keydown', handleKeyboard);
+                    }
+                }
+            }
+
+            renderPhoto();
             modal.classList.add('active');
             
-            // Create extra floating hearts for the special day
+            // Create extra floating hearts for Valentine's Day
             const modalContent = document.querySelector('.modal-content');
             for (let i = 0; i < 20; i++) {
                 const heart = document.createElement('div');
@@ -733,6 +909,7 @@
                 heart.style.animationDelay = Math.random() * 2 + 's';
                 heart.style.fontSize = Math.random() * 20 + 15 + 'px';
                 heart.style.opacity = '0.7';
+                heart.style.pointerEvents = 'none';
                 modalContent.appendChild(heart);
             }
         }
