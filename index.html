@@ -675,7 +675,7 @@
             } else if (cardNum === '3') {
                 // Valentine's Day - February 14
                 // ⚠️ ON 14TH FEBRUARY: This will automatically unlock and show the Valentine's Day card ⚠️
-                if (today.getMonth() === 1 && today.getDate() === 14) {
+                if (today.getMonth() === 1 ) {
                     showValentineDay();
                 } else {
                     showLockedMessage('Valentine\'s Day Special', 'February 14');
@@ -1090,7 +1090,7 @@
             // No action needed from you - just wait for the dates!
             
             // Check Valentine's Day - Auto unlocks on February 14
-            if (today.getMonth() === 1 && today.getDate() === 14) {
+            if (today.getMonth() === 1) {
                 valentineCard.classList.remove('locked');
                 valentineCard.querySelector('.lock-icon').textContent = '🔓';
             }
