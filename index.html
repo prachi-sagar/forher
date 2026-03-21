@@ -1123,9 +1123,10 @@
                 // Keep Valentine's card available all year.
                 showValentineDay();
             } else if (cardNum === '4') {
-                // Birthday - March 24
-                // ⚠️ ON 24TH MARCH: This will automatically unlock and show the Birthday album ⚠️
-                if (today.getMonth() === 2 ) {
+                // Birthday - March 24 onwards, forever
+                // ⚠️ ON 24TH MARCH AND AFTER: This will automatically unlock and show the Birthday album ⚠️
+                const isOnOrAfterBirthday = today.getMonth() > 2 || (today.getMonth() === 2 && today.getDate() >= 24);
+                if (isOnOrAfterBirthday) {
                     showBirthdayAlbum();
                 } else {
                     showLockedMessage('Birthday Special', 'March 24');
