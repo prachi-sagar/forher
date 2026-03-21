@@ -1019,6 +1019,24 @@
     </div>
 
     <script>
+        // Auto-reload at midnight on March 24 to unlock birthday card
+        function scheduleAutoReload() {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const birthdayDate = new Date(currentYear, 2, 24, 0, 0, 0, 0); // March 24 at 12:00 AM
+            
+            // If we haven't reached March 24 yet this year, set up auto-reload
+            if (now < birthdayDate) {
+                const timeUntilBirthday = birthdayDate - now;
+                console.log(`Birthday card will auto-unlock in ${Math.round(timeUntilBirthday / 1000 / 60)} minutes`);
+                
+                setTimeout(() => {
+                    location.reload(); // Reload page at exactly midnight
+                }, timeUntilBirthday);
+            }
+        }
+        scheduleAutoReload();
+
         // Generate floating hearts
         function createHearts() {
             const container = document.getElementById('heartContainer');
