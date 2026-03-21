@@ -1406,7 +1406,12 @@
             };
             butterflyContainer.appendChild(profileImg);
 
-            const photos = [
+            // Mobile detection - optimize for smaller screens
+            const isMobile = window.innerWidth < 768;
+            const animationDuration = isMobile ? '3s' : '6s'; // Faster animations on mobile
+            
+            // All available photos
+            const allPhotos = [
                 'images/b1.jpg', 'images/b2.jpg', 'images/b4.jpg', 'images/b5.jpg', 
                 'images/b6.jpg', 'images/b7.jpg', 'images/b9.jpg', 'images/b10.jpg',
                 'images/b11.jpg', 'images/b12.jpg', 'images/b13.jpg', 'images/b14.jpg',
@@ -1419,8 +1424,12 @@
                 'images/b41.jpg', 'images/b42.jpg', 'images/b47.jpg', 'images/b48.jpg',
                 'images/b49.jpg', 'images/b50.jpg'
             ];
+            
+            // Reduce image count on mobile for faster processing
+            let photos = isMobile ? allPhotos.slice(0, 25) : allPhotos;
 
-            // Create heart shape coordinates
+            // Create heart shape coordinates - adjust count based on device
+            const photoCount = photos.length;
             function getHeartCoordinates(t) {
                 const x = 16 * Math.pow(Math.sin(t), 3);
                 const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
@@ -1428,8 +1437,8 @@
             }
 
             const heartPoints = [];
-            const step = (2 * Math.PI) / 42;
-            for (let i = 0; i < 42; i++) {
+            const step = (2 * Math.PI) / photoCount;
+            for (let i = 0; i < photoCount; i++) {
                 heartPoints.push(getHeartCoordinates(i * step));
             }
 
@@ -1469,8 +1478,8 @@
                 // Orbit positions around profile image (center, bottom)
                 const profileCenterX = window.innerWidth * 0.5;
                 const profileCenterY = window.innerHeight * 0.7;
-                const orbitRadius = 280;
-                const angle = (idx / 42) * Math.PI * 2;
+                const orbitRadius = isMobile ? 200 : 280; // Smaller orbit on mobile
+                const angle = (idx / photoCount) * Math.PI * 2;
                 
                 const midX = profileCenterX + orbitRadius * Math.cos(angle);
                 const midY = profileCenterY + orbitRadius * Math.sin(angle);
@@ -1497,7 +1506,12 @@
                 photoElements.push({ element: photo, idx, endX, endY });
             });
 
-            // Phase 2: Heart Formation ONE BY ONE (starts at 6 seconds)
+            // Optimize timing for mobile vs desktop
+            const phase1Duration = isMobile ? 3000 : 6000; // 3s on mobile, 6s on desktop
+            const heartFormationDelay = isMobile ? 80 : 150; // Faster heart formation on mobile
+            const phase2StartTime = phase1Duration;
+
+            // Phase 2: Heart Formation ONE BY ONE (starts after Phase 1)
             setTimeout(() => {
                 // Stop butterfly flight and move to heart positions one by one
                 photoElements.forEach(({ element, endX, endY }, idx) => {
@@ -1507,11 +1521,12 @@
                         element.style.left = `calc(50% + ${endX}px)`;
                         element.style.top = `calc(50% + ${endY}px)`;
                         element.style.transform = 'translate(-50%, -50%) scale(1)';
-                    }, idx * 150); // Each image takes 150ms to arrive, creating sequential effect
+                    }, idx * heartFormationDelay);
                 });
-            }, 6000);
+            }, phase2StartTime);
 
-            // Phase 3: Scrolling Credit Text + Background Blur (starts after heart is complete)
+            // Phase 3: Scrolling Credit Text + Background Blur
+            const phase3StartTime = phase2StartTime + (photoElements.length * heartFormationDelay) + 500;
             setTimeout(() => {
                 // Dim and progressively blur background
                 butterflyContainer.style.animation = 'backgroundBlur 3s ease-in-out forwards';
@@ -1548,9 +1563,10 @@
                 `;
 
                 overlay.appendChild(scrollContainer);
-            }, 13500);
+            }, phase3StartTime + (isMobile ? 3000 : 10000)); // Faster text display on mobile
 
-            // Phase 4: Surprise Button (starts at 23 seconds)
+            // Phase 4: Surprise Button
+            const phase4StartTime = phase3StartTime + (isMobile ? 6000 : 15000);
             setTimeout(() => {
                 const buttonContainer = document.createElement('div');
                 buttonContainer.style.cssText = `
