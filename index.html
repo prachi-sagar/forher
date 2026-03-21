@@ -735,6 +735,9 @@
             box-shadow: 0 5px 20px rgba(0,0,0,0.5);
             animation: butterflyFlight 6s ease-in-out infinite;
             will-change: transform, opacity;
+            content-visibility: auto;
+            backface-visibility: hidden;
+            transform: translateZ(0) will-change(transform);
         }
 
         .heart-container-birthday {
@@ -1091,11 +1094,21 @@
             }
         });
 
-        // Card click handlers
+        // Card click handlers with debouncing to prevent double-clicks
+        let isCardClickInProgress = false;
+        
         document.querySelectorAll('.card').forEach(card => {
             card.addEventListener('click', function() {
+                if (isCardClickInProgress) return; // Prevent multiple simultaneous clicks
+                isCardClickInProgress = true;
+                
                 const cardNum = this.dataset.card;
                 handleCardClick(cardNum);
+                
+                // Reset after a short delay
+                setTimeout(() => {
+                    isCardClickInProgress = false;
+                }, 500);
             });
         });
 
@@ -1344,6 +1357,11 @@
         }
 
         function showBirthdayAlbum() {
+            // Prevent multiple overlays from being created
+            if (document.getElementById('birthdayOverlay')) {
+                return;
+            }
+
             // Create fullscreen overlay
             const overlay = document.createElement('div');
             overlay.className = 'birthday-overlay';
@@ -1425,71 +1443,59 @@
             const centerY = window.innerHeight / 2;
             const scale = 150; // Scale factor for heart shape
 
-            // Progressive image loading - load in batches to prevent freezing
+            // Load all images immediately with async handling for smooth animation
             const photoElements = [];
-            let loadedCount = 0;
-            const BATCH_SIZE = 20; // Load first 20 immediately
             
-            function loadPhotoBatch(startIdx, endIdx) {
-                for (let idx = startIdx; idx < endIdx && idx < photos.length; idx++) {
-                    const photoSrc = photos[idx];
-                    const photo = document.createElement('img');
-                    photo.src = photoSrc;
-                    photo.className = 'butterfly-photo';
-                    photo.onerror = () => {
-                        photo.style.background = '#ffb3d9';
-                        photo.style.display = 'flex';
-                        photo.style.alignItems = 'center';
-                        photo.style.justifyContent = 'center';
-                        photo.innerHTML = '💕';
-                        photo.style.color = 'white';
-                        photo.style.fontSize = '40px';
-                    };
+            // Create all photo elements with src immediately (non-blocking)
+            photos.forEach((photoSrc, idx) => {
+                const photo = document.createElement('img');
+                photo.src = photoSrc;
+                photo.className = 'butterfly-photo';
+                photo.loading = 'lazy'; // Let browser handle loading optimization
+                photo.onerror = () => {
+                    photo.style.background = '#ffb3d9';
+                    photo.style.display = 'flex';
+                    photo.style.alignItems = 'center';
+                    photo.style.justifyContent = 'center';
+                    photo.innerHTML = '💕';
+                    photo.style.color = 'white';
+                    photo.style.fontSize = '40px';
+                };
 
-                    // Random starting position across entire viewport
-                    const startX = Math.random() * window.innerWidth;
-                    const startY = Math.random() * window.innerHeight;
+                // Random starting position across entire viewport
+                const startX = Math.random() * window.innerWidth;
+                const startY = Math.random() * window.innerHeight;
 
-                    // Orbit positions around profile image (center, bottom)
-                    const profileCenterX = window.innerWidth * 0.5;
-                    const profileCenterY = window.innerHeight * 0.7;
-                    const orbitRadius = 280;
-                    const angle = (idx / 42) * Math.PI * 2;
-                    
-                    const midX = profileCenterX + orbitRadius * Math.cos(angle);
-                    const midY = profileCenterY + orbitRadius * Math.sin(angle);
-                    const midX2 = profileCenterX + orbitRadius * Math.cos(angle + Math.PI);
-                    const midY2 = profileCenterY + orbitRadius * Math.sin(angle + Math.PI);
+                // Orbit positions around profile image (center, bottom)
+                const profileCenterX = window.innerWidth * 0.5;
+                const profileCenterY = window.innerHeight * 0.7;
+                const orbitRadius = 280;
+                const angle = (idx / 42) * Math.PI * 2;
+                
+                const midX = profileCenterX + orbitRadius * Math.cos(angle);
+                const midY = profileCenterY + orbitRadius * Math.sin(angle);
+                const midX2 = profileCenterX + orbitRadius * Math.cos(angle + Math.PI);
+                const midY2 = profileCenterY + orbitRadius * Math.sin(angle + Math.PI);
 
-                    // Heart end position (relative to center)
-                    const normalizedX = (heartPoints[idx].x - heartXMin) / (heartXMax - heartXMin) - 0.5;
-                    const normalizedY = (heartPoints[idx].y - heartYMin) / (heartYMax - heartYMin) - 0.5;
-                    const endX = normalizedX * scale;
-                    const endY = normalizedY * scale;
+                // Heart end position (relative to center)
+                const normalizedX = (heartPoints[idx].x - heartXMin) / (heartXMax - heartXMin) - 0.5;
+                const normalizedY = (heartPoints[idx].y - heartYMin) / (heartYMax - heartYMin) - 0.5;
+                const endX = normalizedX * scale;
+                const endY = normalizedY * scale;
 
-                    photo.style.setProperty('--startX', `${startX}px`);
-                    photo.style.setProperty('--startY', `${startY}px`);
-                    photo.style.setProperty('--midX', `${midX}px`);
-                    photo.style.setProperty('--midY', `${midY}px`);
-                    photo.style.setProperty('--midX2', `${midX2}px`);
-                    photo.style.setProperty('--midY2', `${midY2}px`);
-                    photo.style.setProperty('--endX', `${endX}px`);
-                    photo.style.setProperty('--endY', `${endY}px`);
-                    photo.style.animationDelay = `${idx * 0.06}s`;
+                photo.style.setProperty('--startX', `${startX}px`);
+                photo.style.setProperty('--startY', `${startY}px`);
+                photo.style.setProperty('--midX', `${midX}px`);
+                photo.style.setProperty('--midY', `${midY}px`);
+                photo.style.setProperty('--midX2', `${midX2}px`);
+                photo.style.setProperty('--midY2', `${midY2}px`);
+                photo.style.setProperty('--endX', `${endX}px`);
+                photo.style.setProperty('--endY', `${endY}px`);
+                photo.style.animationDelay = `${idx * 0.06}s`;
 
-                    butterflyContainer.appendChild(photo);
-                    photoElements.push({ element: photo, idx, endX, endY });
-                    loadedCount++;
-                }
-            }
-            
-            // Load first batch immediately
-            loadPhotoBatch(0, BATCH_SIZE);
-            
-            // Load remaining images in background after 500ms  
-            setTimeout(() => {
-                loadPhotoBatch(BATCH_SIZE, photos.length);
-            }, 500);
+                butterflyContainer.appendChild(photo);
+                photoElements.push({ element: photo, idx, endX, endY });
+            });
 
             // Phase 2: Heart Formation ONE BY ONE (starts at 6 seconds)
             setTimeout(() => {
