@@ -731,7 +731,8 @@
             object-fit: cover;
             border: 3px solid white;
             box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-            animation: butterflyFlight 6s ease-in-out infinite, butterflyWobble 1.2s ease-in-out infinite;
+            animation: butterflyFlight 6s ease-in-out infinite;
+            will-change: transform, opacity;
         }
 
         .heart-container-birthday {
@@ -780,6 +781,7 @@
         .confetti {
             position: fixed;
             pointer-events: none;
+            will-change: transform, opacity;
         }
 
         .video-grid-container {
@@ -1589,8 +1591,8 @@
                     fullscreenVideoContainer.appendChild(videoElement);
                     overlay.appendChild(fullscreenVideoContainer);
 
-                    // Create heart rain effect
-                    for (let i = 0; i < 200; i++) {
+                    // Create heart rain effect (optimized for mobile)
+                    for (let i = 0; i < 100; i++) {
                         const heart = document.createElement('div');
                         heart.innerHTML = '❤️';
                         heart.style.cssText = `
@@ -1602,6 +1604,7 @@
                             animation-delay: ${Math.random() * 1.5}s;
                             z-index: 100;
                             pointer-events: none;
+                            will-change: transform, opacity;
                         `;
                         overlay.appendChild(heart);
                         setTimeout(() => heart.remove(), (Math.random() * 3 + 4.5) * 1000);
@@ -1715,8 +1718,8 @@
                         videoGrid.appendChild(videoTile);
                     }
 
-                    // Create confetti
-                    createConfetti(100);
+                    // Create confetti (optimized for mobile)
+                    createConfetti(50);
                     }, 4000);
                 });
 
