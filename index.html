@@ -35,6 +35,14 @@
             background: rgba(255, 105, 180, 0.6);
             transform: rotate(45deg);
             animation: float 15s infinite ease-in-out;
+            will-change: transform;
+            backface-visibility: hidden;
+        }
+        
+        @media (max-width: 768px) {
+            .heart {
+                animation: float 12s infinite ease-in-out;
+            }
         }
 
         .heart::before,
@@ -144,6 +152,16 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             font-weight: bold;
+            will-change: transform, box-shadow;
+            backface-visibility: hidden;
+        }
+        
+        @media (max-width: 768px) {
+            .btn {
+                padding: 18px 35px;
+                font-size: 1.3rem;
+                min-height: 50px;
+            }
         }
 
         .btn-yes {
@@ -193,6 +211,7 @@
             margin-bottom: 20px;
             display: inline-block;
             animation: swing 2s infinite ease-in-out;
+            will-change: transform;
         }
 
         @keyframes swing {
@@ -201,6 +220,13 @@
             }
             50% {
                 transform: rotate(5deg);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .teddy-bear {
+                font-size: 100px;
+                animation: swing 3s infinite ease-in-out;
             }
         }
 
@@ -229,11 +255,25 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             position: relative;
             overflow: hidden;
+            will-change: transform, box-shadow;
+            backface-visibility: hidden;
         }
 
         .card:hover {
             transform: translateY(-10px);
             box-shadow: 0 10px 30px rgba(255, 107, 157, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .card {
+                padding: 25px;
+                min-height: auto;
+            }
+            
+            .card:active {
+                transform: scale(0.98);
+                box-shadow: 0 3px 10px rgba(255, 107, 157, 0.2);
+            }
         }
 
         .card-icon {
@@ -293,6 +333,17 @@
             overflow-y: auto;
             position: relative;
             animation: scaleIn 0.4s ease;
+            will-change: transform;
+            backface-visibility: hidden;
+        }
+        
+        @media (max-width: 768px) {
+            .modal-content {
+                padding: 25px;
+                max-height: 90vh;
+                border-radius: 15px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
         }
 
         @keyframes scaleIn {
@@ -1037,10 +1088,13 @@
         }
         scheduleAutoReload();
 
-        // Generate floating hearts
+        // Generate floating hearts (optimized for mobile)
         function createHearts() {
             const container = document.getElementById('heartContainer');
-            for (let i = 0; i < 15; i++) {
+            const isMobile = window.innerWidth < 768;
+            const heartCount = isMobile ? 8 : 15; // Fewer hearts on mobile
+            
+            for (let i = 0; i < heartCount; i++) {
                 const heart = document.createElement('div');
                 heart.className = 'heart';
                 heart.style.left = Math.random() * 100 + '%';
@@ -1361,7 +1415,10 @@
             
             // Create extra floating hearts for Valentine's Day
             const modalContent = document.querySelector('.modal-content');
-            for (let i = 0; i < 20; i++) {
+            const isMobileValentine = window.innerWidth < 768;
+            const floatingHeartCount = isMobileValentine ? 10 : 20; // Fewer on mobile
+            
+            for (let i = 0; i < floatingHeartCount; i++) {
                 const heart = document.createElement('div');
                 heart.innerHTML = '❤️';
                 heart.style.position = 'absolute';
@@ -1371,6 +1428,8 @@
                 heart.style.fontSize = Math.random() * 20 + 15 + 'px';
                 heart.style.opacity = '0.7';
                 heart.style.pointerEvents = 'none';
+                heart.style.willChange = 'transform';
+                heart.style.backfaceVisibility = 'hidden';
                 modalContent.appendChild(heart);
             }
         }
@@ -1445,7 +1504,7 @@
             ];
             
             // Reduce image count on mobile for faster processing
-            let photos = isMobile ? allPhotos.slice(0, 25) : allPhotos;
+            let photos = isMobile ? allPhotos.slice(0, 20) : allPhotos.slice(0, 35); // Fewer photos on mobile
 
             // Create heart shape coordinates - adjust count based on device
             const photoCount = photos.length;
@@ -1526,8 +1585,8 @@
             });
 
             // Optimize timing for mobile vs desktop
-            const phase1Duration = isMobile ? 3000 : 6000; // 3s on mobile, 6s on desktop
-            const heartFormationDelay = isMobile ? 80 : 150; // Faster heart formation on mobile
+            const phase1Duration = isMobile ? 2500 : 6000; // Faster on mobile
+            const heartFormationDelay = isMobile ? 50 : 150; // Faster formation
             const phase2StartTime = phase1Duration;
 
             // Phase 2: Heart Formation ONE BY ONE (starts after Phase 1)
@@ -1582,10 +1641,10 @@
                 `;
 
                 overlay.appendChild(scrollContainer);
-            }, phase3StartTime + (isMobile ? 3000 : 10000)); // Faster text display on mobile
+            }, phase3StartTime + (isMobile ? 2000 : 10000)); // Much faster on mobile
 
             // Phase 4: Surprise Button
-            const phase4StartTime = phase3StartTime + (isMobile ? 6000 : 15000);
+            const phase4StartTime = phase3StartTime + (isMobile ? 4000 : 15000);
             setTimeout(() => {
                 const buttonContainer = document.createElement('div');
                 buttonContainer.style.cssText = `
@@ -1655,7 +1714,8 @@
                     overlay.appendChild(fullscreenVideoContainer);
 
                     // Create heart rain effect (optimized for mobile)
-                    for (let i = 0; i < 100; i++) {
+                    const heartRainLimit = isMobile ? 50 : 100; // Fewer hearts on mobile
+                    for (let i = 0; i < heartRainLimit; i++) {
                         const heart = document.createElement('div');
                         heart.innerHTML = '❤️';
                         heart.style.cssText = `
@@ -1790,12 +1850,14 @@
                 overlay.appendChild(buttonContainer);
             }, 23000);
 
-            // Function to create confetti
+            // Function to create confetti (optimized for mobile)
             function createConfetti(count) {
                 const colors = ['#ff69b4', '#ff85b3', '#ff99c8', '#ffc0d0', '#ffe4e1'];
                 const shapes = ['heart', 'circle'];
+                const isMobile = window.innerWidth < 768;
+                const confettiCount = isMobile ? Math.floor(count / 2) : count; // Half confetti on mobile
 
-                for (let i = 0; i < count; i++) {
+                for (let i = 0; i < confettiCount; i++) {
                     const confetti = document.createElement('div');
                     confetti.className = 'confetti';
                     confetti.style.left = Math.random() * 100 + '%';
